@@ -1,346 +1,263 @@
-<style>
-  body {
-    font-family: 'Roboto', Arial, sans-serif;
-    background: linear-gradient(270deg, #2c3e50, #2980b9);
-    background-size: 1000% 1000%;
-    animation: gradientBackground 30s ease infinite;
-    color: #ecf0f1;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100vh;
-    position: relative;
-  }
-
-  @keyframes gradientBackground {
-    0% {
-      background-position: 0% 50%;
-    }
-
-    25% {
-      background-position: 50% 50%;
-    }
-
-    50% {
-      background-position: 100% 50%;
-    }
-
-    75% {
-      background-position: 50% 50%;
-    }
-
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
-  header {
-    background-color: rgba(52, 73, 94, 0.8);
-    padding: 20px;
-  }
-
-  .content {
-    padding: 20px;
-  }
-
-  .hand {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-    flex-wrap: wrap;
-  }
-
-  .card {
-    display: inline-block;
-    width: 100px;
-    height: 150px;
-    margin: 10px;
-    background-color: #ffffff;
-    color: #000000;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    text-align: center;
-    font-size: 18px;
-    padding: 10px;
-    box-sizing: border-box;
-    animation: deal 0.5s ease-in-out;
-  }
-
-  @keyframes deal {
-    from {
-      transform: translateY(-20px);
-      opacity: 0;
-    }
-
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
-  .button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 10px;
-    background-color: #007bff;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
-  }
-
-  .button:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-  }
-
-  .balance,
-  .bet-amount {
-    font-size: 24px;
-    margin: 20px 0;
-    padding: 10px;
-    background-color: rgba(52, 73, 94, 0.8);
-    border-radius: 10px;
-    display: inline-block;
-    animation: fadeIn 1s ease-in-out;
-  }
-
-  .bet-amount {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-
-    to {
-      opacity: 1;
-    }
-  }
-
-  .notification {
-    font-size: 24px;
-    margin: 20px 0;
-    padding: 10px;
-    background-color: rgba(52, 152, 219, 0.8);
-    border-radius: 10px;
-    display: none;
-    animation: fadeIn 1s ease-in-out, fadeOut 1s ease-in-out 1s;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10;
-  }
-
-  @keyframes fadeOut {
-    from {
-      opacity: 1;
-    }
-
-    to {
-      opacity: 0;
-    }
-  }
-
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: none;
-    z-index: 5;
-  }
-</style>
+<head>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 </head>
-
 <body>
+  <link rel="stylesheet" href="style.css">
+  <div class="theme-change-wrapper">
+    <label class="theme-change">
+      <input type="checkbox" id="theme-switch">
+      <span class="slider">
+        <span id="theme-label" class="theme-change-label">Dark</span>
+      </span>
+    </label>
+  </div>
+  <div class="language-switch-wrapper">
+    <button class="button" id="language-switch">Switch to Hungarian</button>
+  </div>
   <header>
-    <h1>Black Jack FREE</h1>
+    <h1 id="title">Black Jack</h1>
   </header>
   <div class="content">
-    <h2>Welcome to the Free Blackjack Game!</h2>
-    <p>Enjoy playing blackjack without any cost. Try to beat the dealer and have fun!</p>
+    <h2 id="welcome-message">Welcome to the Free Blackjack Game!</h2>
+    <p id="description">Enjoy playing blackjack without any cost. Try to beat the dealer and have fun!</p>
     <div id="balance" class="balance">Balance: $1000</div>
     <div class="bet-amount">
-      <label for="bet-amount">Bet Amount: $</label>
+      <label for="bet-amount" id="bet-label">Bet Amount: $</label>
       <input type="number" id="bet-amount" min="1" value="10">
     </div>
     <div id="player-hand" class="hand"></div>
-    <div id="player-total"></div>
+    <div class="player-total" id="player-total"></div>
     <div id="dealer-hand" class="hand"></div>
-    <div id="dealer-total"></div>
+    <div class="dealer-total" id="dealer-total"></div>
     <button class="button" id="start-button">Start Game</button>
     <button class="button" id="hit-button" style="display:none;">Hit</button>
     <button class="button" id="stand-button" style="display:none;">Stand</button>
     <div id="notification" class="notification"></div>
     <div id="overlay" class="overlay"></div>
-  </div>
-  <script>
-    let deck = [];
-    const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
-    const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-    let balance = 1000;
-    let betAmount = 10;
+    <script>
+      let deck = [];
+      const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+      const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+      let balance = 1000;
+      let betAmount = 10;
 
-    function createDeck() {
-      deck = [];
-      for (let suit of suits) {
-        for (let value of values) {
-          deck.push({ suit, value });
-        }
-      }
-      deck.sort(() => Math.random() - 0.5);
-    }
-
-    function getCardValue(card) {
-      if (['J', 'Q', 'K'].includes(card.value)) return 10;
-      if (card.value === 'A') return 11;
-      return parseInt(card.value);
-    }
-
-    function calculateHandValue(hand) {
-      let value = hand.reduce((sum, card) => sum + getCardValue(card), 0);
-      let aces = hand.filter(card => card.value === 'A').length;
-      while (value > 21 && aces > 0) {
-        value -= 10;
-        aces--;
-      }
-      return value;
-    }
-
-    function getCardClass(suit) {
-      switch (suit) {
-        case 'Hearts':
-          return 'hearts';
-        case 'Diamonds':
-          return 'diamonds';
-        case 'Clubs':
-          return 'clubs';
-        case 'Spades':
-          return 'spades';
-        default:
-          return '';
-      }
-    }
-
-    function displayHand(hand, elementId, totalElementId) {
-      const handElement = document.getElementById(elementId);
-      const totalElement = document.getElementById(totalElementId);
-      handElement.innerHTML = '';
-      hand.forEach(card => {
-        const cardElement = document.createElement('div');
-        cardElement.className = `card ${getCardClass(card.suit)}`;
-        if (card.suit === 'Hearts') {
-          cardElement.innerHTML = `${card.value} <span style="color:red;">&hearts;</span>`;
-        } else if (card.suit === 'Diamonds') {
-          cardElement.innerHTML = `${card.value} <span style="color:red;">&diams;</span>`;
-        } else if (card.suit === 'Clubs') {
-          cardElement.innerHTML = `${card.value} <span style="color:black;">&clubs;</span>`;
-        } else if (card.suit === 'Spades') {
-          cardElement.innerHTML = `${card.value} <span style="color:black;">&spades;</span>`;
-        }
-        handElement.appendChild(cardElement);
-      });
-      totalElement.textContent = `Total: ${calculateHandValue(hand)}`;
-    }
-
-    let playerHand = [];
-    let dealerHand = [];
-
-    function startGame() {
-      betAmount = parseInt(document.getElementById('bet-amount').value);
-      if (betAmount > balance) {
-        alert('Insufficient balance!');
-        return;
-      }
-      balance -= betAmount;
-      updateBalance();
-      createDeck();
-      playerHand = [deck.pop(), deck.pop()];
-      dealerHand = [deck.pop(), deck.pop()];
-      displayHand(playerHand, 'player-hand', 'player-total');
-      displayHand(dealerHand, 'dealer-hand', 'dealer-total');
-      document.getElementById('start-button').style.display = 'none';
-      document.getElementById('hit-button').style.display = 'inline-block';
-      document.getElementById('stand-button').style.display = 'inline-block';
-
-      if (calculateHandValue(playerHand) === 21) {
-        endGame('Player wins with a Blackjack!');
-        balance += betAmount * 2.5;
-        updateBalance();
-      } else if (calculateHandValue(dealerHand) === 21) {
-        endGame('Dealer wins with a Blackjack!');
-      }
-    }
-
-    function hit() {
-      playerHand.push(deck.pop());
-      displayHand(playerHand, 'player-hand', 'player-total');
-      if (calculateHandValue(playerHand) > 21) {
-        endGame('Player busts! Dealer wins.');
-      } else if (calculateHandValue(playerHand) === 21) {
-        stand();
-      }
-    }
-
-    function stand() {
-      let dealerValue = calculateHandValue(dealerHand);
-      const dealerDraw = () => {
-        if (dealerValue < 17) {
-          dealerHand.push(deck.pop());
-          displayHand(dealerHand, 'dealer-hand', 'dealer-total');
-          dealerValue = calculateHandValue(dealerHand);
-          setTimeout(dealerDraw, 1000);
-        } else {
-          const playerValue = calculateHandValue(playerHand);
-          if (dealerValue > 21 || playerValue > dealerValue) {
-            endGame('Player wins!');
-            balance += betAmount * 2;
-          } else if (playerValue < dealerValue) {
-            endGame('Dealer wins!');
-          } else {
-            endGame('It\'s a tie!');
-            balance += betAmount;
+      function createDeck() {
+        deck = [];
+        for (let suit of suits) {
+          for (let value of values) {
+            deck.push({ suit, value });
           }
+        }
+        deck.sort(() => Math.random() - 0.5);
+      }
+
+      function getCardValue(card) {
+        if (['J', 'Q', 'K'].includes(card.value)) return 10;
+        if (card.value === 'A') return 11;
+        return parseInt(card.value);
+      }
+
+      function calculateHandValue(hand) {
+        let value = hand.reduce((sum, card) => sum + getCardValue(card), 0);
+        let aces = hand.filter(card => card.value === 'A').length;
+        while (value > 21 && aces > 0) {
+          value -= 10;
+          aces--;
+        }
+        return value;
+      }
+
+      function getCardClass(suit) {
+        switch (suit) {
+          case 'Hearts':
+            return 'hearts';
+          case 'Diamonds':
+            return 'diamonds';
+          case 'Clubs':
+            return 'clubs';
+          case 'Spades':
+            return 'spades';
+          default:
+            return '';
+        }
+      }
+
+      function displayHand(hand, elementId, totalElementId) {
+        const handElement = document.getElementById(elementId);
+        const totalElement = document.getElementById(totalElementId);
+        handElement.innerHTML = '';
+        hand.forEach(card => {
+          const cardElement = document.createElement('div');
+          cardElement.className = `card ${getCardClass(card.suit)}`;
+          if (card.suit === 'Hearts') {
+            cardElement.innerHTML = `${card.value} <span style="color:red;">&hearts;</span>`;
+          } else if (card.suit === 'Diamonds') {
+            cardElement.innerHTML = `${card.value} <span style="color:red;">&diams;</span>`;
+          } else if (card.suit === 'Clubs') {
+            cardElement.innerHTML = `${card.value} <span style="color:black;">&clubs;</span>`;
+          } else if (card.suit === 'Spades') {
+            cardElement.innerHTML = `${card.value} <span style="color:black;">&spades;</span>`;
+          }
+          handElement.appendChild(cardElement);
+        });
+        const totalText = currentLanguage === 'hu' ? 'Összesen' : 'Total';
+        totalElement.textContent = `${totalText}: ${calculateHandValue(hand)}`;
+      }
+
+      let playerHand = [];
+      let dealerHand = [];
+
+      function startGame() {
+        betAmount = parseInt(document.getElementById('bet-amount').value);
+        if (betAmount > balance) {
+          alert(translations[currentLanguage].insufficientBalance);
+          return;
+        }
+        balance -= betAmount;
+        updateBalance();
+        createDeck();
+        playerHand = [deck.pop(), deck.pop()];
+        dealerHand = [deck.pop(), deck.pop()];
+        displayHand(playerHand, 'player-hand', 'player-total');
+        displayHand(dealerHand, 'dealer-hand', 'dealer-total');
+        document.getElementById('start-button').style.display = 'none';
+        document.getElementById('hit-button').style.display = 'inline-block';
+        document.getElementById('stand-button').style.display = 'inline-block';
+
+        if (calculateHandValue(playerHand) === 21) {
+          endGame(translations[currentLanguage].playerBlackjack);
+          balance += betAmount * 2.5;
           updateBalance();
+        } else if (calculateHandValue(dealerHand) === 21) {
+          endGame(translations[currentLanguage].dealerBlackjack);
+        }
+      }
+
+      function hit() {
+        playerHand.push(deck.pop());
+        displayHand(playerHand, 'player-hand', 'player-total');
+        if (calculateHandValue(playerHand) > 21) {
+          endGame(translations[currentLanguage].playerBust);
+        } else if (calculateHandValue(playerHand) === 21) {
+          stand();
+        }
+      }
+
+      function stand() {
+        let dealerValue = calculateHandValue(dealerHand);
+        const dealerDraw = () => {
+          if (dealerValue < 17) {
+            dealerHand.push(deck.pop());
+            displayHand(dealerHand, 'dealer-hand', 'dealer-total');
+            dealerValue = calculateHandValue(dealerHand);
+            setTimeout(dealerDraw, 1000);
+          } else {
+            const playerValue = calculateHandValue(playerHand);
+            if (dealerValue > 21 || playerValue > dealerValue) {
+              endGame(translations[currentLanguage].playerWins);
+              balance += betAmount * 2;
+            } else if (playerValue < dealerValue) {
+              endGame(translations[currentLanguage].dealerWins);
+            } else {
+              endGame(translations[currentLanguage].tie);
+              balance += betAmount;
+            }
+            updateBalance();
+          }
+        };
+        dealerDraw();
+      }
+
+      function endGame(message) {
+        const notification = document.getElementById('notification');
+        const overlay = document.getElementById('overlay');
+        notification.textContent = message;
+        notification.style.display = 'block';
+        overlay.style.display = 'block';
+        setTimeout(() => {
+          notification.style.display = 'none';
+          overlay.style.display = 'none';
+        }, 2000);
+        document.getElementById('start-button').style.display = 'inline-block';
+        document.getElementById('hit-button').style.display = 'none';
+        document.getElementById('stand-button').style.display = 'none';
+      }
+
+      function updateBalance() {
+        document.getElementById('balance').textContent = `${translations[currentLanguage].balance}: $${balance}`;
+      }
+
+      document.getElementById('start-button').addEventListener('click', startGame);
+      document.getElementById('hit-button').addEventListener('click', hit);
+      document.getElementById('stand-button').addEventListener('click', stand);
+
+      document.getElementById('theme-switch').addEventListener('change', (event) => {
+        document.body.classList.toggle('light-theme');
+        document.querySelector('header').classList.toggle('light-theme');
+        document.querySelector('.balance').classList.toggle('light-theme');
+        document.querySelector('.bet-amount').classList.toggle('light-theme');
+        document.querySelector('.notification').classList.toggle('light-theme');
+        document.querySelectorAll('.button').forEach(button => {
+          button.classList.toggle('light-theme');
+        });
+        document.getElementById('theme-label').textContent = event.target.checked ? 'Light' : 'Dark';
+      });
+
+      const translations = {
+        en: {
+          title: "Black Jack",
+          welcomeMessage: "Welcome to the Free Blackjack Game!",
+          description: "Enjoy playing blackjack without any cost. Try to beat the dealer and have fun!",
+          betLabel: "Bet Amount: $",
+          startButton: "Start Game",
+          hitButton: "Hit",
+          standButton: "Stand",
+          switchLanguage: "Switch to Hungarian",
+          insufficientBalance: "Insufficient balance!",
+          playerBlackjack: "Player wins with a Blackjack!",
+          dealerBlackjack: "Dealer wins with a Blackjack!",
+          playerBust: "Player busts! Dealer wins.",
+          playerWins: "Player wins!",
+          dealerWins: "Dealer wins!",
+          tie: "It's a tie!",
+          balance: "Balance"
+        },
+        hu: {
+          title: "Black Jack",
+          welcomeMessage: "Üdvözöljük az ingyenes Blackjack játékban!",
+          description: "Élvezd a játékot költség nélkül. Próbáld meg legyőzni az osztót!",
+          betLabel: "Tét összege: $",
+          startButton: "Játék indítása",
+          hitButton: "Kér",
+          standButton: "Megáll",
+          switchLanguage: "Váltás angolra",
+          insufficientBalance: "Nincs elég egyenleg!",
+          playerBlackjack: "A játékos nyer egy Blackjack-kel!",
+          dealerBlackjack: "Az osztó nyer egy Blackjack-kel!",
+          playerBust: "A játékos túllépte a 21-et! Az osztó nyer.",
+          playerWins: "A játékos nyer!",
+          dealerWins: "Az osztó nyer!",
+          tie: "Döntetlen!",
+          balance: "Egyenleg"
         }
       };
-      dealerDraw();
-    }
 
-    function endGame(message) {
-      const notification = document.getElementById('notification');
-      const overlay = document.getElementById('overlay');
-      notification.textContent = message;
-      notification.style.display = 'block';
-      overlay.style.display = 'block';
-      setTimeout(() => {
-        notification.style.display = 'none';
-        overlay.style.display = 'none';
-      }, 2000);
-      document.getElementById('start-button').style.display = 'inline-block';
-      document.getElementById('hit-button').style.display = 'none';
-      document.getElementById('stand-button').style.display = 'none';
-    }
+      let currentLanguage = 'en';
 
-    function updateBalance() {
-      document.getElementById('balance').textContent = `Balance: $${balance}`;
-    }
+      function switchLanguage() {
+        currentLanguage = currentLanguage === 'en' ? 'hu' : 'en';
+        document.getElementById('title').textContent = translations[currentLanguage].title;
+        document.getElementById('welcome-message').textContent = translations[currentLanguage].welcomeMessage;
+        document.getElementById('description').textContent = translations[currentLanguage].description;
+        document.getElementById('bet-label').textContent = translations[currentLanguage].betLabel;
+        document.getElementById('start-button').textContent = translations[currentLanguage].startButton;
+        document.getElementById('hit-button').textContent = translations[currentLanguage].hitButton;
+        document.getElementById('stand-button').textContent = translations[currentLanguage].standButton;
+        document.getElementById('language-switch').textContent = translations[currentLanguage].switchLanguage;
+        updateBalance();
+      }
 
-    document.getElementById('start-button').addEventListener('click', startGame);
-    document.getElementById('hit-button').addEventListener('click', hit);
-    document.getElementById('stand-button').addEventListener('click', stand);
-  </script>
+      document.getElementById('language-switch').addEventListener('click', switchLanguage);
+    </script>
 </body>
-
 </html>
