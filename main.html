@@ -15,80 +15,242 @@
     <button class="button" id="language-switch">Switch to Hungarian</button>
   </div>
   <header>
-    <h1 id="title">Black Jack</h1>
+    <h1 id="title" style="color: inherit;">Game Menu</h1> <!-- Ensure text color inherits from parent -->
   </header>
-  <div class="content">
-    <h2 id="welcome-message">Welcome to the Free Blackjack Game!</h2>
-    <p id="description">Enjoy playing blackjack without any cost. Try to beat the dealer and have fun!</p>
-    <div id="balance" class="balance">Balance: $1000</div>
-    <div class="bet-amount">
-      <label for="bet-amount" id="bet-label">Bet Amount: $</label>
-      <input type="number" id="bet-amount" min="1" value="10">
+  <div class="content" id="menu">
+    <h2 style="color: inherit;">Select a Game</h2> <!-- Ensure text color inherits from parent -->
+    <button class="button" onclick="loadGame('blackjack')">Black Jack</button>
+    <button class="button" onclick="loadGame('plinko')">Plinko</button>
+    <!-- Add more game buttons here -->
+  </div>
+  <div class="content" id="game-content" style="display:none;">
+    <button class="button" onclick="backToMenu()">Back to Menu</button>
+    <div id="blackjack-content" style="display:none;">
+      <h2 id="welcome-message" style="color: inherit;">Welcome to the Free Blackjack Game!</h2> <!-- Ensure text color inherits from parent -->
+      <p id="description" style="color: inherit;">Enjoy playing blackjack without any cost. Try to beat the dealer and have fun!</p> <!-- Ensure text color inherits from parent -->
+      <div id="balance" class="balance">Balance: $1000</div>
+      <div class="bet-amount">
+        <label for="bet-amount" id="bet-label">Bet Amount: $</label>
+        <input type="number" id="bet-amount" min="1" value="10">
+      </div>
+      <div id="player-hand" class="hand"></div>
+      <div class="player-total" id="player-total"></div>
+      <div id="dealer-hand" class="hand"></div>
+      <div class="dealer-total" id="dealer-total"></div>
+      <button class="button" id="start-button">Start Game</button>
+      <button class="button" id="hit-button" style="display:none;">Hit</button>
+      <button class="button" id="stand-button" style="display:none;">Stand</button>
+      <div id="notification" class="notification"></div>
+      <div id="overlay" class="overlay"></div>
     </div>
-    <div id="player-hand" class="hand"></div>
-    <div class="player-total" id="player-total"></div>
-    <div id="dealer-hand" class="hand"></div>
-    <div class="dealer-total" id="dealer-total"></div>
-    <button class="button" id="start-button">Start Game</button>
-    <button class="button" id="hit-button" style="display:none;">Hit</button>
-    <button class="button" id="stand-button" style="display:none;">Stand</button>
-    <div id="notification" class="notification"></div>
-    <div id="overlay" class="overlay"></div>
-    <script>
-      let deck = [];
-      const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
-      const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-      let balance = 1000;
-      let betAmount = 10;
+    <div id="plinko-content" style="display:block;">
+      <h2 style="color: inherit;">Welcome to Plinko!</h2> <!-- Ensure text color inherits from parent -->
+      <p style="color: inherit;">Drop the ball and see where it lands!</p> <!-- Ensure text color inherits from parent -->
+      <div id="balance" class="balance">Balance: $1000</div> <!-- Display balance -->
+      <div class="bet-amount">
+        <label for="plinko-bet-amount">Bet Amount: $</label>
+        <input type="number" id="plinko-bet-amount" min="1" value="10">
+      </div>
+      <button class="button" onclick="dropBall()">Drop Ball</button>
+      <div id="plinko-board">
+        <!-- Plinko board structure -->
+        <div class="plinko-pyramid">
+          <div class="plinko-row">
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+          </div>
+          <div class="plinko-row">
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+          </div>
+          <div class="plinko-row">
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+          </div>
+          <div class="plinko-row">
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+          </div>
+          <div class="plinko-row">
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+          </div>
+          <div class="plinko-row">
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+          </div>
+          <div class="plinko-row">
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+          </div>
+          <div class="plinko-row">
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+          </div>
+          <div class="plinko-row">
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+          </div>
+          <div class="plinko-row">
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+          </div>
+          <div class="plinko-row">
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+          </div>
+          <div class="plinko-row">
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+            <div class="plinko-peg"></div>
+          </div>
+        </div>
+        <div class="plinko-multipliers">
+          <div class="multiplier">10x</div>
+          <div class="multiplier">5x</div>
+          <div class="multiplier">2x</div>
+          <div class="multiplier">0x</div>
+          <div class="multiplier">2x</div>
+          <div class="multiplier">5x</div>
+          <div class="multiplier">10x</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="win-notification-container" class="win-notification-container"></div>
+  <script>
+    function loadGame(game) {
+      document.getElementById('menu').style.display = 'none';
+      document.getElementById('game-content').style.display = 'block';
+      document.getElementById('title').textContent = game === 'blackjack' ? 'Black Jack' : 'Plinko';
+      document.getElementById('blackjack-content').style.display = game === 'blackjack' ? 'block' : 'none';
+      document.getElementById('plinko-content').style.display = game === 'plinko' ? 'block' : 'none';
+    }
 
-      function createDeck() {
-        deck = [];
-        for (let suit of suits) {
-          for (let value of values) {
-            deck.push({ suit, value });
-          }
+    function backToMenu() {
+      document.getElementById('menu').style.display = 'block';
+      document.getElementById('game-content').style.display = 'none';
+      document.getElementById('title').textContent = 'Game Menu';
+    }
+
+    // Blackjack game logic
+    let deck = [];
+    const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+    const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    let balance = 1000;
+    let betAmount = 10;
+
+    function createDeck() {
+      deck = [];
+      for (let suit of suits) {
+        for (let value of values) {
+          deck.push({ suit, value });
         }
-        deck.sort(() => Math.random() - 0.5);
       }
+      deck.sort(() => Math.random() - 0.5);
+    }
 
-      function getCardValue(card) {
-        if (['J', 'Q', 'K'].includes(card.value)) return 10;
-        if (card.value === 'A') return 11;
-        return parseInt(card.value);
+    function getCardValue(card) {
+      if (['J', 'Q', 'K'].includes(card.value)) return 10;
+      if (card.value === 'A') return 11;
+      return parseInt(card.value);
+    }
+
+    function calculateHandValue(hand) {
+      let value = hand.reduce((sum, card) => sum + getCardValue(card), 0);
+      let aces = hand.filter(card => card.value === 'A').length;
+      while (value > 21 && aces > 0) {
+        value -= 10;
+        aces--;
       }
+      return value;
+    }
 
-      function calculateHandValue(hand) {
-        let value = hand.reduce((sum, card) => sum + getCardValue(card), 0);
-        let aces = hand.filter(card => card.value === 'A').length;
-        while (value > 21 && aces > 0) {
-          value -= 10;
-          aces--;
-        }
-        return value;
+    function getCardClass(suit) {
+      switch (suit) {
+        case 'Hearts':
+          return 'hearts';
+        case 'Diamonds':
+          return 'diamonds';
+        case 'Clubs':
+          return 'clubs';
+        case 'Spades':
+          return 'spades';
+        default:
+          return '';
       }
+    }
 
-      function getCardClass(suit) {
-        switch (suit) {
-          case 'Hearts':
-            return 'hearts';
-          case 'Diamonds':
-            return 'diamonds';
-          case 'Clubs':
-            return 'clubs';
-          case 'Spades':
-            return 'spades';
-          default:
-            return '';
-        }
-      }
-
-      function displayHand(hand, elementId, totalElementId) {
-        const handElement = document.getElementById(elementId);
-        const totalElement = document.getElementById(totalElementId);
-        handElement.innerHTML = '';
-        hand.forEach(card => {
-          const cardElement = document.createElement('div');
-          cardElement.className = `card ${getCardClass(card.suit)}`;
+    function displayHand(hand, elementId, totalElementId, hideSecondCard = false) {
+      const handElement = document.getElementById(elementId);
+      const totalElement = document.getElementById(totalElementId);
+      handElement.innerHTML = '';
+      hand.forEach((card, index) => {
+        const cardElement = document.createElement('div');
+        cardElement.className = `card ${getCardClass(card.suit)}`;
+        if (hideSecondCard && index === 1) {
+          cardElement.classList.add('hidden-card');
+          cardElement.innerHTML = 'Hidden';
+        } else {
           if (card.suit === 'Hearts') {
             cardElement.innerHTML = `${card.value} <span style="color:red;">&hearts;</span>`;
           } else if (card.suit === 'Diamonds') {
@@ -98,166 +260,283 @@
           } else if (card.suit === 'Spades') {
             cardElement.innerHTML = `${card.value} <span style="color:black;">&spades;</span>`;
           }
-          handElement.appendChild(cardElement);
-        });
-        const totalText = currentLanguage === 'hu' ? 'Összesen' : 'Total';
-        totalElement.textContent = `${totalText}: ${calculateHandValue(hand)}`;
-      }
-
-      let playerHand = [];
-      let dealerHand = [];
-
-      function startGame() {
-        betAmount = parseInt(document.getElementById('bet-amount').value);
-        if (betAmount > balance) {
-          alert(translations[currentLanguage].insufficientBalance);
-          return;
         }
-        balance -= betAmount;
-        updateBalance();
-        createDeck();
-        playerHand = [deck.pop(), deck.pop()];
-        dealerHand = [deck.pop(), deck.pop()];
-        displayHand(playerHand, 'player-hand', 'player-total');
-        displayHand(dealerHand, 'dealer-hand', 'dealer-total');
-        document.getElementById('start-button').style.display = 'none';
-        document.getElementById('hit-button').style.display = 'inline-block';
-        document.getElementById('stand-button').style.display = 'inline-block';
-
-        if (calculateHandValue(playerHand) === 21) {
-          endGame(translations[currentLanguage].playerBlackjack);
-          balance += betAmount * 2.5;
-          updateBalance();
-        } else if (calculateHandValue(dealerHand) === 21) {
-          endGame(translations[currentLanguage].dealerBlackjack);
-        }
-      }
-
-      function hit() {
-        playerHand.push(deck.pop());
-        displayHand(playerHand, 'player-hand', 'player-total');
-        if (calculateHandValue(playerHand) > 21) {
-          endGame(translations[currentLanguage].playerBust);
-        } else if (calculateHandValue(playerHand) === 21) {
-          stand();
-        }
-      }
-
-      function stand() {
-        let dealerValue = calculateHandValue(dealerHand);
-        const dealerDraw = () => {
-          if (dealerValue < 17) {
-            dealerHand.push(deck.pop());
-            displayHand(dealerHand, 'dealer-hand', 'dealer-total');
-            dealerValue = calculateHandValue(dealerHand);
-            setTimeout(dealerDraw, 1000);
-          } else {
-            const playerValue = calculateHandValue(playerHand);
-            if (dealerValue > 21 || playerValue > dealerValue) {
-              endGame(translations[currentLanguage].playerWins);
-              balance += betAmount * 2;
-            } else if (playerValue < dealerValue) {
-              endGame(translations[currentLanguage].dealerWins);
-            } else {
-              endGame(translations[currentLanguage].tie);
-              balance += betAmount;
-            }
-            updateBalance();
-          }
-        };
-        dealerDraw();
-      }
-
-      function endGame(message) {
-        const notification = document.getElementById('notification');
-        const overlay = document.getElementById('overlay');
-        notification.textContent = message;
-        notification.style.display = 'block';
-        overlay.style.display = 'block';
-        setTimeout(() => {
-          notification.style.display = 'none';
-          overlay.style.display = 'none';
-        }, 2000);
-        document.getElementById('start-button').style.display = 'inline-block';
-        document.getElementById('hit-button').style.display = 'none';
-        document.getElementById('stand-button').style.display = 'none';
-      }
-
-      function updateBalance() {
-        document.getElementById('balance').textContent = `${translations[currentLanguage].balance}: $${balance}`;
-      }
-
-      document.getElementById('start-button').addEventListener('click', startGame);
-      document.getElementById('hit-button').addEventListener('click', hit);
-      document.getElementById('stand-button').addEventListener('click', stand);
-
-      document.getElementById('theme-switch').addEventListener('change', (event) => {
-        document.body.classList.toggle('light-theme');
-        document.querySelector('header').classList.toggle('light-theme');
-        document.querySelector('.balance').classList.toggle('light-theme');
-        document.querySelector('.bet-amount').classList.toggle('light-theme');
-        document.querySelector('.notification').classList.toggle('light-theme');
-        document.querySelectorAll('.button').forEach(button => {
-          button.classList.toggle('light-theme');
-        });
-        document.getElementById('theme-label').textContent = event.target.checked ? 'Light' : 'Dark';
+        handElement.appendChild(cardElement);
       });
+      const totalText = currentLanguage === 'hu' ? 'Összesen' : 'Total';
+      const handValue = hideSecondCard ? getCardValue(hand[0]) : calculateHandValue(hand);
+      totalElement.textContent = `${totalText}: ${handValue}`;
+    }
 
-      const translations = {
-        en: {
-          title: "Black Jack",
-          welcomeMessage: "Welcome to the Free Blackjack Game!",
-          description: "Enjoy playing blackjack without any cost. Try to beat the dealer and have fun!",
-          betLabel: "Bet Amount: $",
-          startButton: "Start Game",
-          hitButton: "Hit",
-          standButton: "Stand",
-          switchLanguage: "Switch to Hungarian",
-          insufficientBalance: "Insufficient balance!",
-          playerBlackjack: "Player wins with a Blackjack!",
-          dealerBlackjack: "Dealer wins with a Blackjack!",
-          playerBust: "Player busts! Dealer wins.",
-          playerWins: "Player wins!",
-          dealerWins: "Dealer wins!",
-          tie: "It's a tie!",
-          balance: "Balance"
-        },
-        hu: {
-          title: "Black Jack",
-          welcomeMessage: "Üdvözöljük az ingyenes Blackjack játékban!",
-          description: "Élvezd a játékot költség nélkül. Próbáld meg legyőzni az osztót!",
-          betLabel: "Tét összege: $",
-          startButton: "Játék indítása",
-          hitButton: "Kér",
-          standButton: "Megáll",
-          switchLanguage: "Váltás angolra",
-          insufficientBalance: "Nincs elég egyenleg!",
-          playerBlackjack: "A játékos nyer egy Blackjack-kel!",
-          dealerBlackjack: "Az osztó nyer egy Blackjack-kel!",
-          playerBust: "A játékos túllépte a 21-et! Az osztó nyer.",
-          playerWins: "A játékos nyer!",
-          dealerWins: "Az osztó nyer!",
-          tie: "Döntetlen!",
-          balance: "Egyenleg"
-        }
-      };
+    let playerHand = [];
+    let dealerHand = [];
 
-      let currentLanguage = 'en';
+    function startGame() {
+      betAmount = parseInt(document.getElementById('bet-amount').value);
+      if (betAmount > balance) {
+        alert(translations[currentLanguage].insufficientBalance);
+        return;
+      }
+      balance -= betAmount;
+      updateBalance();
+      createDeck();
+      playerHand = [deck.pop(), deck.pop()];
+      dealerHand = [deck.pop(), deck.pop()];
+      displayHand(playerHand, 'player-hand', 'player-total');
+      displayHand(dealerHand, 'dealer-hand', 'dealer-total', true);
+      document.getElementById('start-button').style.display = 'none';
+      document.getElementById('hit-button').style.display = 'inline-block';
+      document.getElementById('stand-button').style.display = 'inline-block';
 
-      function switchLanguage() {
-        currentLanguage = currentLanguage === 'en' ? 'hu' : 'en';
-        document.getElementById('title').textContent = translations[currentLanguage].title;
-        document.getElementById('welcome-message').textContent = translations[currentLanguage].welcomeMessage;
-        document.getElementById('description').textContent = translations[currentLanguage].description;
-        document.getElementById('bet-label').textContent = translations[currentLanguage].betLabel;
-        document.getElementById('start-button').textContent = translations[currentLanguage].startButton;
-        document.getElementById('hit-button').textContent = translations[currentLanguage].hitButton;
-        document.getElementById('stand-button').textContent = translations[currentLanguage].standButton;
-        document.getElementById('language-switch').textContent = translations[currentLanguage].switchLanguage;
+      if (calculateHandValue(playerHand) === 21) {
+        endGame(translations[currentLanguage].playerBlackjack);
+        balance += betAmount * 2.5;
         updateBalance();
+      } else if (calculateHandValue(dealerHand) === 21) {
+        endGame(translations[currentLanguage].dealerBlackjack);
+      }
+    }
+
+    function hit() {
+      playerHand.push(deck.pop());
+      displayHand(playerHand, 'player-hand', 'player-total');
+      if (calculateHandValue(playerHand) > 21) {
+        endGame(translations[currentLanguage].playerBust);
+      } else if (calculateHandValue(playerHand) === 21) {
+        stand();
+      }
+    }
+
+    function stand() {
+      let dealerValue = calculateHandValue(dealerHand);
+      const hiddenCard = document.querySelector('#dealer-hand .hidden-card');
+      if (hiddenCard) {
+        hiddenCard.classList.add('revealed');
+        hiddenCard.innerHTML = `${dealerHand[1].value} <span style="color:${dealerHand[1].suit === 'Hearts' || dealerHand[1].suit === 'Diamonds' ? 'red' : 'black'};">${dealerHand[1].suit === 'Hearts' ? '&hearts;' : dealerHand[1].suit === 'Diamonds' ? '&diams;' : dealerHand[1].suit === 'Clubs' ? '&clubs;' : '&spades;'}</span>`;
+        hiddenCard.style.transform = 'rotateY(360deg)'; // Ensure correct orientation
+        displayHand(dealerHand, 'dealer-hand', 'dealer-total');
+        dealerValue = calculateHandValue(dealerHand);
       }
 
-      document.getElementById('language-switch').addEventListener('click', switchLanguage);
-    </script>
+      function dealerDraw() {
+        if (dealerValue < 17) {
+          dealerHand.push(deck.pop());
+          displayHand(dealerHand, 'dealer-hand', 'dealer-total');
+          dealerValue = calculateHandValue(dealerHand);
+          setTimeout(dealerDraw, 1000);
+        } else {
+          const playerValue = calculateHandValue(playerHand);
+          if (dealerValue > 21 || playerValue > dealerValue) {
+            endGame(translations[currentLanguage].playerWins);
+            balance += betAmount * 2;
+          } else if (playerValue < dealerValue) {
+            endGame(translations[currentLanguage].dealerWins);
+          } else {
+            endGame(translations[currentLanguage].tie);
+            balance += betAmount;
+          }
+          updateBalance();
+        }
+      }
+
+      dealerDraw();
+    }
+
+    function endGame(message) {
+      const notification = document.getElementById('notification');
+      const overlay = document.getElementById('overlay');
+      notification.textContent = message;
+      notification.style.display = 'block';
+      overlay.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+        overlay.style.display = 'none';
+      }, 2000);
+      document.getElementById('start-button').style.display = 'inline-block';
+      document.getElementById('hit-button').style.display = 'none';
+      document.getElementById('stand-button').style.display = 'none';
+    }
+
+    function updateBalance() {
+      document.querySelectorAll('.balance').forEach(balanceElement => {
+        balanceElement.textContent = `${translations[currentLanguage].balance}: $${balance}`;
+      });
+    }
+
+    document.getElementById('start-button').addEventListener('click', startGame);
+    document.getElementById('hit-button').addEventListener('click', hit);
+    document.getElementById('stand-button').addEventListener('click', stand);
+
+    document.getElementById('theme-switch').addEventListener('change', (event) => {
+      document.body.classList.toggle('light-theme');
+      document.querySelector('header').classList.toggle('light-theme');
+      document.querySelector('.balance').classList.toggle('light-theme');
+      document.querySelector('.bet-amount').classList.toggle('light-theme');
+      document.querySelector('.notification').classList.toggle('light-theme');
+      document.querySelectorAll('.button').forEach(button => {
+        button.classList.toggle('light-theme');
+      });
+      document.getElementById('theme-label').textContent = event.target.checked ? 'Light' : 'Dark';
+    });
+
+    const translations = {
+      en: {
+        title: "Black Jack",
+        welcomeMessage: "Welcome to the Free Blackjack Game!",
+        description: "Enjoy playing blackjack without any cost. Try to beat the dealer and have fun!",
+        betLabel: "Bet Amount: $",
+        startButton: "Start Game",
+        hitButton: "Hit",
+        standButton: "Stand",
+        switchLanguage: "Switch to Hungarian",
+        insufficientBalance: "Insufficient balance!",
+        playerBlackjack: "Player wins with a Blackjack!",
+        dealerBlackjack: "Dealer wins with a Blackjack!",
+        playerBust: "Player busts! Dealer wins.",
+        playerWins: "Player wins!",
+        dealerWins: "Dealer wins!",
+        tie: "It's a tie!",
+        balance: "Balance"
+      },
+      hu: {
+        title: "Black Jack",
+        welcomeMessage: "Üdvözöljük az ingyenes Blackjack játékban!",
+        description: "Élvezd a játékot költség nélkül. Próbáld meg legyőzni az osztót!",
+        betLabel: "Tét összege: $",
+        startButton: "Játék indítása",
+        hitButton: "Kér",
+        standButton: "Megáll",
+        switchLanguage: "Váltás angolra",
+        insufficientBalance: "Nincs elég egyenleg!",
+        playerBlackjack: "A játékos nyer egy Blackjack-kel!",
+        dealerBlackjack: "Az osztó nyer egy Blackjack-kel!",
+        playerBust: "A játékos túllépte a 21-et! Az osztó nyer.",
+        playerWins: "A játékos nyer!",
+        dealerWins: "Az osztó nyer!",
+        tie: "Döntetlen!",
+        balance: "Egyenleg"
+      }
+    };
+
+    let currentLanguage = 'en';
+
+    function switchLanguage() {
+      currentLanguage = currentLanguage === 'en' ? 'hu' : 'en';
+      document.getElementById('title').textContent = translations[currentLanguage].title;
+      document.getElementById('welcome-message').textContent = translations[currentLanguage].welcomeMessage;
+      document.getElementById('description').textContent = translations[currentLanguage].description;
+      document.getElementById('bet-label').textContent = translations[currentLanguage].betLabel;
+      document.getElementById('start-button').textContent = translations[currentLanguage].startButton;
+      document.getElementById('hit-button').textContent = translations[currentLanguage].hitButton;
+      document.getElementById('stand-button').textContent = translations[currentLanguage].standButton;
+      document.getElementById('language-switch').textContent = translations[currentLanguage].switchLanguage;
+      updateBalance();
+    }
+
+    document.getElementById('language-switch').addEventListener('click', switchLanguage);
+
+    // Plinko game logic
+    function showWinNotification(message) {
+      const container = document.getElementById('win-notification-container');
+      const notification = document.createElement('div');
+      notification.className = 'win-notification';
+      notification.textContent = message;
+      container.appendChild(notification);
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 100);
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+          container.removeChild(notification);
+        }, 500);
+      }, 3000);
+    }
+
+    function dropBall() {
+      const betAmount = parseInt(document.getElementById('plinko-bet-amount').value);
+      if (betAmount > balance) {
+        alert(translations[currentLanguage].insufficientBalance);
+        return;
+      }
+      balance -= betAmount;
+      updateBalance();
+
+      const board = document.getElementById('plinko-board');
+      const ball = document.createElement('div');
+      ball.className = 'ball';
+      board.appendChild(ball);
+
+      let x = board.clientWidth / 2 - ball.clientWidth / 2;
+      let y = 0;
+      let velocityX = (Math.random() - 0.5) * 2; // Add initial horizontal velocity
+      let velocityY = 2;
+      const gravity = 0.1;
+      const damping = 0.8;
+
+      function updateBallPosition() {
+        velocityY += gravity;
+        x += velocityX;
+        y += velocityY;
+
+        // Collision detection with pegs
+        const pegs = document.querySelectorAll('.plinko-peg');
+        pegs.forEach(peg => {
+          const pegRect = peg.getBoundingClientRect();
+          const ballRect = ball.getBoundingClientRect();
+          const dx = (ballRect.left + ballRect.width / 2) - (pegRect.left + pegRect.width / 2);
+          const dy = (ballRect.top + ballRect.height / 2) - (pegRect.top + pegRect.height / 2);
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < pegRect.width / 2 + ballRect.width / 2) {
+            const angle = Math.atan2(dy, dx);
+            const randomFactor = (Math.random() - 0.5) * 0.2; // Add randomness to the bounce
+            velocityX = Math.cos(angle + randomFactor) * damping;
+            velocityY = Math.sin(angle + randomFactor) * damping;
+          }
+        });
+
+        // Boundary collision detection
+        if (x <= 0 || x >= board.clientWidth - ball.clientWidth) {
+          velocityX *= -damping;
+        }
+        if (y >= board.clientHeight - ball.clientHeight) {
+          velocityY *= -damping;
+          y = board.clientHeight - ball.clientHeight;
+        }
+
+        ball.style.left = `${x}px`;
+        ball.style.top = `${y}px`;
+
+        if (y < board.clientHeight - ball.clientHeight) {
+          requestAnimationFrame(updateBallPosition);
+        } else {
+          checkMultiplier(x, betAmount, ball);
+        }
+      }
+
+      function checkMultiplier(x, betAmount, ball) {
+        const multipliers = document.querySelectorAll('.multiplier');
+        let ballLanded = false;
+        multipliers.forEach(multiplier => {
+          const rect = multiplier.getBoundingClientRect();
+          const ballRect = ball.getBoundingClientRect();
+          if (ballRect.left >= rect.left && ballRect.right <= rect.right && ballRect.bottom >= rect.top && ballRect.top <= rect.bottom) {
+            const multiplierValue = parseInt(multiplier.textContent.replace('x', ''));
+            const winnings = betAmount * multiplierValue;
+            balance += winnings;
+            updateBalance();
+            showWinNotification(`You landed on ${multiplier.textContent} and won $${winnings}`);
+            ball.remove(); // Despawn the ball
+            ballLanded = true;
+          }
+        });
+        if (!ballLanded) {
+          ball.remove(); // Despawn the ball if it didn't land in any multiplier
+        }
+      }
+
+      updateBallPosition();
+    }
+  </script>
 </body>
 </html>
